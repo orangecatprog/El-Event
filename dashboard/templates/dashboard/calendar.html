@@ -1,0 +1,120 @@
+{% extends "dashboard/_base.html" %}
+
+{% block title %}Dashboard - Calendar{% endblock %}
+
+{% block content %}
+<style>
+    .calendar-table {
+        width: 100%;
+        table-layout: fixed;
+    }
+
+    .calendar-table th {
+        text-align: center;
+        font-size: .85rem;
+    }
+
+    .calendar-cell {
+        height: 110px;
+        vertical-align: top;
+        padding: .35rem;
+        overflow: hidden;
+    }
+
+    .calendar-day-number {
+        font-size: .85rem;
+        font-weight: 700;
+        margin-bottom: .25rem;
+    }
+
+    .calendar-events {
+        display: flex;
+        flex-direction: column;
+        gap: .2rem;
+        max-height: 75px;
+        overflow: hidden;
+    }
+
+    .calendar-events .badge {
+        font-size: .65rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* 🔥 MOBILE: aún más compacto */
+    @media (max-width: 576px) {
+        .calendar-cell {
+            height: 85px;
+            padding: .25rem;
+        }
+
+        .calendar-day-number {
+            font-size: .75rem;
+        }
+
+        .calendar-events {
+            max-height: 55px;
+        }
+
+        .calendar-events .badge {
+            font-size: .6rem;
+        }
+
+        .table th {
+            font-size: .7rem;
+        }
+    }
+</style>
+
+<div class="d-flex align-items-center justify-content-between mb-3">
+    <h1 class="h2 fw-bold mb-0">Calendar</h1>
+    <span class="fw-semibold text-muted">
+        {{ year }} / {{ month }}
+    </span>
+</div>
+
+<div class="card border-0 shadow-sm">
+    <div class="card-body p-0">
+
+        <table class="table table-bordered mb-0 calendar-table">
+            <thead class="table-light">
+                <tr>
+                    <th>Mon</th>
+                    <th>Tue</th>
+                    <th>Wed</th>
+                    <th>Thu</th>
+                    <th>Fri</th>
+                    <th>Sat</th>
+                    <th>Sun</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for week in weeks %}
+                <tr>
+                    {% for day in week %}
+                    <td class="calendar-cell {% if not day.is_current_month %}bg-body-tertiary text-muted{% endif %}">
+                        
+                        <div class="calendar-day-number">
+                            {{ day.date.day }}
+                        </div>
+
+                        <div class="calendar-events">
+                            {% for event in day.events %}
+                                <span class="badge text-bg-primary text-truncate">
+                                    {{ event.title }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                    </td>
+                    {% endfor %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+{% endblock %}

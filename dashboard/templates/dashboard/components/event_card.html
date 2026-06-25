@@ -1,0 +1,19 @@
+{% load static %}
+<div class="card border-0 shadow-sm h-100">
+    <div class="card-body d-flex flex-column">
+        <h5 class="card-title fw-bold">{{ card.event.title }}</h5>
+        <p class="card-text text-muted small mb-2">
+            <i class="fa-regular fa-calendar"></i>
+            {{ card.event.starts_at|date:"d M Y H:i" }} &ndash; {{ card.event.ends_at|date:"d M Y H:i" }}
+        </p>
+        <p class="card-text flex-grow-1">{{ card.event.short_description|truncatewords:25 }}</p>
+        <p class="card-text text-muted small mb-0">
+            <i class="fa-solid fa-location-dot"></i> {{ card.event.location_address }}, {{ card.event.location_city }}
+            &middot;
+            <i class="fa-solid fa-user"></i> {{ card.participant_usernames|length }} / {% if card.event.max_participants > 0 %}{{ card.event.max_participants }}{% else %}&infin;{% endif %}
+            &middot;
+            <i class="fa-regular fa-user"></i> {{ card.creator_username }}
+        </p>
+        <a href="{% url 'event-detail' card.event.id %}" class="stretched-link"></a>
+    </div>
+</div>

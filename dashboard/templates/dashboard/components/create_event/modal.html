@@ -1,0 +1,126 @@
+{% load crispy_forms_tags %}
+
+<div class="modal fade" id="createEventModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-fullscreen-sm-down modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="modal-header">
+                    <h5 class="modal-title">New event</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    {% for field in create_event_form %}
+
+                        {% if field.name == "title" or field.name == "short_description" or field.name == "tags" %}
+                            <div class="mb-3">
+                                {{ field|as_crispy_field }}
+                            </div>
+
+                        {% elif field.name == "detailed_description" %}
+                            <div class="row g-4 mb-3">
+                                <div class="col-12 col-lg-6">
+                                    {{ field|as_crispy_field }}
+                                </div>
+
+                                <div class="col-12 col-lg-6">
+                                    <label class="form-label">Preview</label>
+
+                                    <div
+                                        class="markdown-preview border rounded p-3 bg-body-tertiary"
+                                        style="min-height:250px; max-height:400px; overflow:auto;"
+                                    ></div>
+                                </div>
+                            </div>
+
+                        {% elif field.name == "starts_at" or field.name == "ends_at" %}
+                            {% if field.name == "starts_at" %}
+                                <div class="row g-3 mb-3">
+                            {% endif %}
+
+                            <div class="col-12 col-md-6">
+                                {{ field|as_crispy_field }}
+                            </div>
+
+                            {% if field.name == "ends_at" %}
+                                </div>
+                            {% endif %}
+
+                        {% elif field.name == "location_address" or field.name == "location_city" %}
+                            {% if field.name == "location_address" %}
+                                <div class="row g-3 mb-3">
+                            {% endif %}
+
+                            <div class="col-12 col-md-6">
+                                {{ field|as_crispy_field }}
+                            </div>
+
+                            {% if field.name == "location_city" %}
+                                </div>
+                            {% endif %}
+
+                        {% else %}
+                            <div class="mb-3">
+                                {{ field|as_crispy_field }}
+                            </div>
+                        {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+                <div class="modal-footer d-flex flex-column flex-sm-row justify-content-sm-end gap-2">
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary flex-fill flex-sm-grow-0"
+                        data-bs-dismiss="modal"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        name="action"
+                        value="create_event"
+                        class="btn btn-success flex-fill flex-sm-grow-0"
+                    >
+                        Save
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const textarea = document.getElementById("id_detailed_description");
+    const preview = document.querySelector(".markdown-preview");
+
+    if (textarea && preview && typeof marked !== "undefined") {
+
+        const updatePreview = () => {
+            const html = marked.parse(textarea.value || "");
+            preview.innerHTML = typeof DOMPurify !== "undefined"
+                ? DOMPurify.sanitize(html)
+                : html;
+        };
+
+        textarea.addEventListener("input", updatePreview);
+        updatePreview();
+    }
+
+    {% if open_create_event_modal %}
+        const modalElement = document.getElementById("createEventModal");
+
+        if (modalElement && typeof bootstrap !== "undefined") {
+            bootstrap.Modal.getOrCreateInstance(modalElement).show();
+        }
+    {% endif %}
+});
+</script>

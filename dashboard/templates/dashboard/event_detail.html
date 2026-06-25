@@ -1,0 +1,72 @@
+{% extends "dashboard/_base.html" %}
+{% load markdown_extras %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h1 class="h2 fw-bold mb-1">{{ event.title }}</h1>
+                <p class="text-muted mb-3">
+                    <i class="fa-regular fa-calendar"></i>
+                    {{ event.starts_at|date:"d M Y H:i" }} &ndash; {{ event.ends_at|date:"d M Y H:i" }}
+                </p>
+
+                <hr>
+
+                <div class="event-detail-content">
+                    {{ event.detailed_description|markdown_extras:event.title|safe }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <h5 class="card-title fw-bold"><i class="fa-solid fa-location-dot"></i> Location</h5>
+                <p class="card-text mb-0">{{ event.location_address }}</p>
+                <p class="card-text text-muted">{{ event.location_city }}</p>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body">
+                <h5 class="card-title fw-bold"><i class="fa-solid fa-users"></i> Participants</h5>
+                <p class="card-text mb-0">
+                    {{ event.participants|length }}
+                    {% if event.max_participants > 0 %}
+                        / {{ event.max_participants }}
+                    {% endif %}
+                </p>
+            </div>
+        </div>
+
+        {% if user.is_authenticated %}
+            <div class="d-grid gap-2">
+                {% if is_participant %}
+                    <form method="post" action="{% url 'event-leave' event.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-danger w-100">
+                            <i class="fa-solid fa-right-from-bracket"></i> Salir
+                        </button>
+                    </form>
+                {% elif is_full %}
+                    <button type="button" class="btn btn-secondary w-100" disabled>
+                        <i class="fa-solid fa-ban"></i> Completo
+                    </button>
+                {% else %}
+                    <form method="post" action="{% url 'event-join' event.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fa-solid fa-plus"></i> Unirse
+                        </button>
+                    </form>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
