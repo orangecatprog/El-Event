@@ -10,22 +10,26 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
+import os
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+BUILD_COMMAND = 'bash build.sh'
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-66!-cdp27_72m2m%t=gp=-g%8r#r6meh^=aik(c+95&1!51b50'
+SECRET_KEY = os.environ.get("SECRET_KEY", 'local-key-only-for-developing')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", 'False') == 'True'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.onrender', 'localhost', '127.0.0.1', '0.0.0.0']
 
 
 # Application definition
@@ -45,7 +49,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware'
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -78,9 +82,9 @@ WSGI_APPLICATION = 'el_event.wsgi.application'
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -133,3 +137,9 @@ CRISPY_TEMPLATE_PACK = "bootstrap5"
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'dashboard-home'
 LOGOUT_REDIRECT_URL = 'login'
+
+STORAGES = {
+    'staticfiles': {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    }
+}
