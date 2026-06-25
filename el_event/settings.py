@@ -31,6 +31,9 @@ DEBUG = os.environ.get("DEBUG", 'False') == 'True'
 
 ALLOWED_HOSTS = ['.onrender.com', 'localhost', '127.0.0.1', '0.0.0.0']
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://el-event.onrender.com",
+]
 
 # Application definition
 
